@@ -17,7 +17,6 @@
                 v-else-if="!isMenuHidden"
                 icon
                 class="profile-avatar"
-                @click="openCreateGroupDialog"
             >
                 <v-icon>mdi-plus</v-icon>
             </v-btn>

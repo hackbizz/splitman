@@ -1,9 +1,10 @@
 <template>
-  <v-card class="mx-auto my-8" elevation="16" max-width="1000">
+  <v-card class="rounded-xl mx-auto my-8 ma-8" elevation="16" max-width="1000">
     <v-card
       v-for="group in groups"
       :key="group.group_id"
       @click="goToChat(group)"
+      class="rounded-e-xl mx-auto ma-4 pa-2 ml-4 mr-4" elevation="16"
     >
       <v-card-title>
         <v-avatar class="mr-4">

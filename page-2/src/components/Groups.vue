@@ -2,14 +2,14 @@
     <v-app class="appbar">    
       <AppBar
         :search="search"
-        :isCreateGroupButtonHidden="isCreateGroupButtonHidden"
         :isMenuHidden="isMenuHidden"
         :username="username"
         :windowWidth="windowWidth"
         :drawer="drawer"
-        @toggleDrawer="toggleDrawer"
+        @toggleDrawer="toggleDrawer()"
+        @groupCreated="fetchGroups()"
       />
-      <NavBar :drawer="drawer" :key="drawer" />
+      <NavBar :drawer="drawer"  />
       <v-main>
         <v-container>
           <GroupCard :groups="groups" />

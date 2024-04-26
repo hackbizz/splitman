@@ -12,9 +12,9 @@
     <NavBar :drawer="drawer" :key="drawer" />
     <v-main>
       <v-container fluid>
-        <v-row justify="left">
+        <v-row justify="justified">
           <v-col cols="12" sm="8" md="6" lg="4">
-            <v-card class="chat-box ma-2">
+            <v-card class="chat-box mx-auto my-8" elevation="16" max-width="1000">
               <!-- Group name and menu bar -->
 
               <v-toolbar color="blue" class="d-flex justify-space-between">
@@ -207,9 +207,9 @@ export default {
 
 <style scoped>
 .chat-box {
-  height: 800px; /* Set a fixed height for the chat box */
   overflow-y: auto; /* Enable vertical scrolling */
-  width: 300%;
+  /* Width of chat box */
+  /* width: 100%; */
 
   @media (max-width: 896) {
     width: 200%;

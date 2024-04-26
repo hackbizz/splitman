@@ -9,7 +9,6 @@
             label="Search..."
             hide-details
             append-icon="mdi-magnify"
-            @click="searchItems"
             @click:append="searchItems"
             class="search-field"
             outlined
@@ -28,7 +27,12 @@
             Create New Group
         </v-btn> -->
         
-        <CreateGroupForm />
+        <CreateGroupForm 
+        :isCreateGroupButtonHidden="isCreateGroupButtonHidden"
+        :isMenuHidden="isMenuHidden"
+        :windowWidth="windowWidth"
+        @groupCreated="$emit('groupCreated')"
+        />
         <!-- <v-btn
             v-else-if="!isMenuHidden"
             icon
@@ -97,7 +101,7 @@
                         </v-list-item-icon>
                         <v-list-item-content>Create New Group</v-list-item-content> -->
                     <!-- </template> -->
-                    <CreateGroupForm />
+                    <CreateGroupForm @groupCreated="$emit('groupCreated')"/>
                 </v-list-item>
             <v-list-item>
                 <v-list-item-icon>
@@ -140,16 +144,6 @@ import CreateGroupForm from './CreateGroupForm.vue';
         },
         props: ['search', 'isCreateGroupButtonHidden', 'isMenuHidden', 'username', 'windowWidth', 'drawer'],
         methods: {
-            openCreateGroupDialog() {
-                this.createGroupDialog = true;
-                console.log('Dialog Box open')
-            },
-            handleGroupCreated(groupData) {
-                // Handle group created event, e.g., update group list
-                // Example:
-                // this.groups.push(groupData);
-                // this.createGroupDialogVisible = false;
-            },
             updateSearch(value) {
                 // Emit an event to update search in parent component
                 this.$emit('update:search', value)
@@ -158,7 +152,7 @@ import CreateGroupForm from './CreateGroupForm.vue';
                 // Emit an event to update search in parent component
                 // this.$emit('update:search', this.search);
                 this.updateSearch(this.search)
-                console.log('Searching for: ', this.search)
+                // console.log('Searching for: ', this.search)
             },
             handleProfileClick() {
                 // Here you can define the actions to be performed when the Profile option is clicked

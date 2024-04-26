@@ -39,7 +39,7 @@
 <script>
     export default {
         name: 'NavBar',
-        props:["drawer"],
+        props:['drawer', 'windowWidth'],
         data() {
             return {
                 activeItem: "Dashboard",
