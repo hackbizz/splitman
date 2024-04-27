@@ -10,6 +10,7 @@ import {
   groupMembers,
   usersGroups,
   upload,
+  balanceExpense,
 } from "../controllers/group.controller.js";
 
 const groupRouter = express.Router();
@@ -21,5 +22,6 @@ groupRouter.delete("/delete/:group_id", deleteGroup);
 groupRouter.get("/groupDetails/:group_id", groupDetails);
 groupRouter.get("/groupMembers/:group_id", groupMembers);
 groupRouter.get("/usersGroups/:user_id", usersGroups);
+groupRouter.get("/groupBalance/:group_id", balanceExpense);
 
 export default groupRouter;

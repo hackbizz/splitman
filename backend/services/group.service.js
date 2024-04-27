@@ -7,6 +7,7 @@ import {
   groupDetailsDb,
   groupMembersDetailDb,
   usersGroupsDb,
+  balanceExpenseDb,
 } from "../db/group.db.js";
 
 class GroupService {
@@ -69,6 +70,14 @@ class GroupService {
   static usersGroups = async (data) => {
     try {
       return await usersGroupsDb(data);
+    } catch (error) {
+      console.log(error);
+      throw new ErrorHandler("Error While Database Operation", 401);
+    }
+  };
+  static balanceExpense = async (data) => {
+    try {
+      return await balanceExpenseDb(data);
     } catch (error) {
       console.log(error);
       throw new ErrorHandler("Error While Database Operation", 401);

@@ -137,3 +137,25 @@ export const usersGroupsDb = async (user_id) => {
 
   return result.rows;
 };
+export const balanceExpenseDb = async ({group_id}) => {
+  const result = await pool.query(
+    `SELECT 
+    ep.*, 
+    e.expense_id,
+    payer.name AS payer_name,
+    debtor.name AS debtor_name
+  FROM 
+    expense_creation e 
+  JOIN 
+    expense_participants ep ON ep.expense_id = e.expense_id 
+  JOIN
+    users payer ON ep.payer_id = payer.id
+  JOIN
+    users debtor ON ep.debtor_id = debtor.id
+  WHERE 
+    e.group_id = $1`,
+    [group_id]
+  );
+
+  return result.rows;
+};

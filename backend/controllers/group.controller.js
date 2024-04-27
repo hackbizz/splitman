@@ -134,6 +134,56 @@ export const usersGroups = async (req, res, next) => {
   }
 };
 
+export const balanceExpense = async (req, res, next) => {
+  try {
+      const group_id = req.params.group_id;
+ 
+      const balanceExpense = await GroupService.balanceExpense({
+          group_id,
+        });
+        console.log(balanceExpense);
+
+        const toPayDetails = {}
+
+        balanceExpense.map((data)=>{
+          if(!toPayDetails[data.debtor_id]){
+            toPayDetails[data.debtor_id] ={
+              id: data.debtor_id,
+              name:data.debtor_name,
+              amount:0
+            }
+          }
+
+          toPayDetails[data.debtor_id].amount += data.amount
+        })
+
+        const getPayDetails = {}
+
+        balanceExpense.map((data)=>{
+          if(!getPayDetails[data.payer_id]){
+            getPayDetails[data.payer_id] ={
+              id: data.payer_id,
+              name:data.payer_name,
+              amount:0
+            }
+          }
+
+          getPayDetails[data.payer_id].amount += data.amount
+        })
+        
+
+        res.status(201).json({
+          success: true,
+          message: `Expense Balanced successfully!`,
+          toPayDetails:toPayDetails,
+          getPayDetails:getPayDetails
+        });
+
+  } catch (error) {
+      next(error);
+  }
+};
+
 const storage = multer.diskStorage({
   destination: "./upload/GroupImage",
   filename: (req, file, cb) => {
