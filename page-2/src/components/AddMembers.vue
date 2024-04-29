@@ -114,7 +114,7 @@ export default {
         await axios
           .post("http://localhost:3000/api/groups/addMemberGroup", {
             participants: this.selectedParticipants,
-            group_id: group_id,
+            group_id: this.group_id,
           })
           .then((response) => {
             // Group created successfully

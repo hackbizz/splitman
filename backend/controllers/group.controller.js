@@ -141,42 +141,79 @@ export const balanceExpense = async (req, res, next) => {
       const balanceExpense = await GroupService.balanceExpense({
           group_id,
         });
-        console.log(balanceExpense);
 
-        const toPayDetails = {}
+        // const toPayDetails = {}
 
-        balanceExpense.map((data)=>{
-          if(!toPayDetails[data.debtor_id]){
-            toPayDetails[data.debtor_id] ={
-              id: data.debtor_id,
-              name:data.debtor_name,
-              amount:0
-            }
-          }
+        // balanceExpense.map((data)=>{
+        //   if(!toPayDetails[data.debtor_id]){
+        //     toPayDetails[data.debtor_id] ={
+        //       id: data.debtor_id,
+        //       name:data.debtor_name,
+        //       amount:0
+        //     }
+        //   }
 
-          toPayDetails[data.debtor_id].amount += data.amount
-        })
+        //   toPayDetails[data.debtor_id].amount += data.amount
+        // })
 
-        const getPayDetails = {}
+        // const getPayDetails = {}
 
-        balanceExpense.map((data)=>{
-          if(!getPayDetails[data.payer_id]){
-            getPayDetails[data.payer_id] ={
+        // balanceExpense.map((data)=>{
+        //   if(!getPayDetails[data.payer_id]){
+        //     getPayDetails[data.payer_id] ={
+        //       id: data.payer_id,
+        //       name:data.payer_name,
+        //       amount:0
+        //     }
+        //   }
+
+        //   getPayDetails[data.payer_id].amount += data.amount
+        // })
+
+        const balanceDetails = {};
+
+        balanceExpense.map((data) => {
+          if (!balanceDetails[data.payer_id]) {
+            balanceDetails[data.payer_id] = {
               id: data.payer_id,
-              name:data.payer_name,
-              amount:0
-            }
+              name: data.payer_name,
+              amount_owed: 0,
+              amount_you_owe: 0,
+              balance: 0,
+            };
           }
-
-          getPayDetails[data.payer_id].amount += data.amount
-        })
+        
+          if (!balanceDetails[data.debtor_id]) {
+            balanceDetails[data.debtor_id] = {
+              id: data.debtor_id,
+              name: data.debtor_name,
+              amount_owed: 0,
+              amount_you_owe: 0,
+              balance: 0,
+            };
+          }
+        
+          if (data.payer_id!== data.debtor_id) {
+            balanceDetails[data.payer_id].amount_owed += data.amount;
+            balanceDetails[data.debtor_id].amount_you_owe += data.amount;
+          }
+        
+          balanceDetails[data.payer_id].balance =
+            balanceDetails[data.payer_id].amount_owed -
+            balanceDetails[data.payer_id].amount_you_owe;
+        
+          balanceDetails[data.debtor_id].balance =
+            balanceDetails[data.debtor_id].amount_owed -
+            balanceDetails[data.debtor_id].amount_you_owe;
+        });
+        
+        const balanceDetailsArray = Object.values(balanceDetails);
         
 
         res.status(201).json({
           success: true,
           message: `Expense Balanced successfully!`,
-          toPayDetails:toPayDetails,
-          getPayDetails:getPayDetails
+          balanceDetails: balanceDetailsArray,
         });
 
   } catch (error) {

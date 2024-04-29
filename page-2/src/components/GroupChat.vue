@@ -27,9 +27,12 @@
 
                 <v-toolbar-title class="text-h6">{{ groupDetails.group_name }}</v-toolbar-title>
 
-                <v-btn variant="outlined" class="menu-buttons"
-                  >Add Expense</v-btn
-                >
+                <!-- <v-btn variant="outlined" class="menu-buttons"  @click="addExpense">Add Expense</v-btn> -->
+                <!-- <v-btn variant="outlined" class="menu-buttons" @click="openAddExpenseDialog">Add Expense</v-btn> -->
+                <AddExpenseForm
+                :group_id="group_id"
+                /> 
+
 
                 <!-- <template  v-slot:append>
                           <v-btn icon="mdi-dots-vertical"></v-btn>    
@@ -110,6 +113,7 @@ import AddMembers from "./AddMembers.vue";
 import GroupDetails from "./GroupDetails.vue"
 import { useRouter } from "vue-router";
 import axios from 'axios';
+import AddExpenseForm from './AddExpenseForm.vue';
 
 export default {
   name: "GroupChat",
@@ -118,6 +122,7 @@ export default {
     AppBar,
     AddMembers,
     GroupDetails,
+    AddExpenseForm
   },
   data() {
     return {
@@ -201,6 +206,16 @@ export default {
       // Update window width on resize
       this.windowWidth = window.innerWidth;
     },
+    addExpense() {
+    // Implement the functionality to add expenses here
+    console.log("Expense added!");
+    this.$refs.expenseFormDialog.open();
+    // You can also trigger a dialog or perform any other action here
+  },
+  // openAddExpenseDialog() {
+  //   // Emit an event to open the dialog for adding expenses
+  //   this.$refs.addExpenseForm.dialog = true;
+  // },
   },
 };
 </script>
