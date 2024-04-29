@@ -1,21 +1,23 @@
 <template>
-    <v-app class="appbar">    
-      <AppBar
-        :search="search"
-        :isMenuHidden="isMenuHidden"
-        :username="username"
-        :windowWidth="windowWidth"
-        :drawer="drawer"
-        @toggleDrawer="toggleDrawer()"
-        @groupCreated="fetchGroups()"
-      />
-      <NavBar :drawer="drawer"  />
-      <v-main>
-        <v-container>
-          <GroupCard :groups="groups" />
-        </v-container>
-      </v-main>
-      <!-- <v-app-bar class="header" app :elevation="1">
+  <v-app class="appbar">
+    <AppBar
+      :search="search"
+      :isMenuHidden="isMenuHidden"
+      :username="username"
+      :windowWidth="windowWidth"
+      :drawer="drawer"
+      @toggleDrawer="toggleDrawer()"
+      @groupCreated="fetchGroups()"
+      @successToast="successToast()"
+      @errorToast="errorToast()"
+    />
+    <NavBar :drawer="drawer" />
+    <v-main>
+      <v-container>
+        <GroupCard :groups="groups" />
+      </v-container>
+    </v-main>
+    <!-- <v-app-bar class="header" app :elevation="1">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>SplitMan</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -125,8 +127,8 @@
         <v-spacer></v-spacer>
   
       </v-app-bar> -->
-  
-      <!-- <v-navigation-drawer app  v-model="drawer"> 
+
+    <!-- <v-navigation-drawer app  v-model="drawer"> 
         <v-list class="navi-items">
           <v-list-item
             prepend-icon="mdi-view-dashboard"
@@ -160,8 +162,8 @@
           ></v-list-item>
         </v-list>
       </v-navigation-drawer> -->
-  
-      <!-- <v-main>
+
+    <!-- <v-main>
         <v-container>
           <v-card class="mx-auto my-8" elevation="16" max-width="1000">
             <v-card v-for="group in groups" :key="group.name" link to="/">
@@ -181,153 +183,167 @@
           </v-card>
         </v-container>
       </v-main> -->
-    </v-app>
-  </template>
-  
-  <script>
-  import NavBar from './NavBar.vue';
-  import AppBar from './AppBar.vue';
-  import GroupCard from './GroupCard.vue';
-  import axios from 'axios'
-  
-  export default {
-    name: "GroupList",
-    components: {
-      NavBar,
-      AppBar,
-      GroupCard
+  </v-app>
+</template>
+
+<script>
+import NavBar from "./NavBar.vue";
+import AppBar from "./AppBar.vue";
+import GroupCard from "./GroupCard.vue";
+import axios from "axios";
+import { toast } from "vue3-toastify";
+import "../../node_modules/vue3-toastify/dist/index.css";
+
+export default {
+  name: "GroupList",
+  components: {
+    NavBar,
+    AppBar,
+    GroupCard,
+  },
+  data() {
+    return {
+      drawer: false,
+      search: "",
+      username: "Deepanshu Dixit",
+      participants: [],
+      groups: [],
+      windowWidth: window.innerWidth,
+    };
+  },
+  computed: {
+    isCreateGroupButtonHidden() {
+      return this.windowWidth <= 800; // Adjust breakpoint as needed
     },
-    data() {
-      return {
-        drawer: false,
-        search: "",
-        username: "Deepanshu Dixit",
-        participants: [],
-        groups: [],
-        windowWidth: window.innerWidth
-      };
+    isTextVerticalAlign() {
+      return this.windowWidth <= 800; // Adjust breakpoint as needed
     },
-    computed: {
-      isCreateGroupButtonHidden() {
-        return this.windowWidth <= 800; // Adjust breakpoint as needed
-      },
-      isTextVerticalAlign() {
-        return this.windowWidth <= 800; // Adjust breakpoint as needed
-      },
-      isMenuHidden() {
-        return this.windowWidth <= 426; // Adjust breakpoint as needed
-      }
+    isMenuHidden() {
+      return this.windowWidth <= 426; // Adjust breakpoint as needed
     },
-    created() {
-      // Fetch group information from backend API
-      this.fetchGroups();
-      this.fetchParticipants();
-  
-      // Keep nav bar open on mounting for larger screens
-      if (this.windowWidth > 960) {
-        this.drawer = true;
-      }
-  
-      // Listen for window resize event
-      window.addEventListener('resize', this.handleWindowResize);
-    },
-    destroyed() {
-      // Remove window resize event listener to prevent memory leaks
-      window.removeEventListener('resize', this.handleWindowResize);
-    },
-    methods: {
-      async fetchGroups() {
-        // Fetch groups data from backend API
-        // Example:
-        await axios.get('http://localhost:3000/api/groups/usersGroups/1')
-          .then(response => {
-            this.groups = response.data.members;
-          })
-          .catch(error => {
-            console.error('Error fetching groups:', error);
-          });
-  
-        // // For now, using dummy data
-        // this.groups = [
-        //   { name: "Group 1", amountOwed: 5000, amountOwedToYou: 7600, totalBalance: 2600 },
-        //   { name: "Group 2", amountOwed: 3000, amountOwedToYou: 5400, totalBalance: 2400 },
-        //   // Add more groups as needed
-        // ];
-      },
-      fetchParticipants() {
-        // Fetch participants data from backend API
-        // Example:
-        // axios.get('/api/participants')
-        //   .then(response => {
-        //     this.participants = response.data;
-        //   })
-        //   .catch(error => {
-        //     console.error('Error fetching participants:', error);
-        //   });
-  
-        // For now, using dummy data
-        this.participants = [
-          { text: 'Participant 1', value: 'participant1' },
-          { text: 'Participant 2', value: 'participant2' },
-          // Add more participants as needed
-        ];
-      },
-      toggleDrawer() {
-        this.drawer = !this.drawer;
-        console.log('Drawer state:', this.drawer);
-      },
-      // createNewGroup() {
-      //   // Logic for creating a new group
-      //   console.log("Create New Group")
-      // },
-      // searchItems() {
-      //   // Implement search functionality here
-      //   console.log("Searching for:", this.search);
-      // },
-      // handleProfileClick() {
-      //   // Here you can define the actions to be performed when the Profile option is clicked
-      //   console.log("Profile clicked");
-      //   // this.$router.push('/profile');
-      // },
-      // handleLogoutClick() {
-      //   // Here you can define the actions to be performed when the Logout option is clicked
-      //   console.log("Logout clicked");
-      //   // this.$store.dispatch('logout');
-      //   // this.$router.push('/login');
-      // },
-      handleWindowResize() {
-        // Update window width on resize
-        this.windowWidth = window.innerWidth;
-      }
+  },
+  created() {
+    // Fetch group information from backend API
+    this.fetchGroups();
+    this.fetchParticipants();
+
+    // Keep nav bar open on mounting for larger screens
+    if (this.windowWidth > 960) {
+      this.drawer = true;
     }
-  };
-  
-  </script>
-  
-  <style scoped>
-  /* .search-field {
+
+    // Listen for window resize event
+    window.addEventListener("resize", this.handleWindowResize);
+  },
+  destroyed() {
+    // Remove window resize event listener to prevent memory leaks
+    window.removeEventListener("resize", this.handleWindowResize);
+  },
+  methods: {
+    async fetchGroups() {
+      // Fetch groups data from backend API
+      // Example:
+      await axios
+        .get("http://localhost:3000/api/groups/usersGroups/1")
+        .then((response) => {
+          this.groups = response.data.members;
+        })
+        .catch((error) => {
+          console.error("Error fetching groups:", error);
+        });
+
+      // // For now, using dummy data
+      // this.groups = [
+      //   { name: "Group 1", amountOwed: 5000, amountOwedToYou: 7600, totalBalance: 2600 },
+      //   { name: "Group 2", amountOwed: 3000, amountOwedToYou: 5400, totalBalance: 2400 },
+      //   // Add more groups as needed
+      // ];
+    },
+    fetchParticipants() {
+      // Fetch participants data from backend API
+      // Example:
+      // axios.get('/api/participants')
+      //   .then(response => {
+      //     this.participants = response.data;
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching participants:', error);
+      //   });
+
+      // For now, using dummy data
+      this.participants = [
+        { text: "Participant 1", value: "participant1" },
+        { text: "Participant 2", value: "participant2" },
+        // Add more participants as needed
+      ];
+    },
+    toggleDrawer() {
+      this.drawer = !this.drawer;
+      console.log("Drawer state:", this.drawer);
+    },
+
+    successToast() {
+      toast.success("Group Created Successfully!", {
+        autoClose: 2000,
+      });
+    },
+
+    errorToast() {
+      toast.error("Error while Group Creation", {
+        autoClose: 2000,
+      });
+    },
+    // createNewGroup() {
+    //   // Logic for creating a new group
+    //   console.log("Create New Group")
+    // },
+    // searchItems() {
+    //   // Implement search functionality here
+    //   console.log("Searching for:", this.search);
+    // },
+    // handleProfileClick() {
+    //   // Here you can define the actions to be performed when the Profile option is clicked
+    //   console.log("Profile clicked");
+    //   // this.$router.push('/profile');
+    // },
+    // handleLogoutClick() {
+    //   // Here you can define the actions to be performed when the Logout option is clicked
+    //   console.log("Logout clicked");
+    //   // this.$store.dispatch('logout');
+    //   // this.$router.push('/login');
+    // },
+    handleWindowResize() {
+      // Update window width on resize
+      this.windowWidth = window.innerWidth;
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* .search-field {
     width: 300px; Adjust width as needed
     border: 1px solid #a32323; Border color and thickness
     border-radius: 8px; Border radius
   } */
-  /* .create-group-btn {
+/* .create-group-btn {
     margin-right: 16px;
   } */
-  /* .profile-avatar {
+/* .profile-avatar {
     margin-right: 10px; Adjust margin as needed
     margin-left: 16px;
     border: 3px solid #673AB7;
   }  */
-  /* .navi-items {
+/* .navi-items {
     font-size: 25px;
     margin-top: 40px;
   } */
-  .appbar {
-    background-color: #e7d3eb;
-    display: flex;
-  }
-  
-  /* media queries
+.appbar {
+  background-color: #e7d3eb;
+  display: flex;
+}
+
+/* media queries
   .header {
     display: flex;
   }
@@ -337,9 +353,9 @@
       display: none;
     }
   } */
-  
-  /* New styles for group details and vertical dividers */
-  /* .group-details-container {
+
+/* New styles for group details and vertical dividers */
+/* .group-details-container {
     display: flex;
     align-items: center;
     flex-wrap: wrap; Added to allow wrapping of group detail text
@@ -380,5 +396,4 @@
       background-color: grey; Set background color for horizontal dividers
     }
   } */
-  </style>
-  
+</style>

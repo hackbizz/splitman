@@ -8,6 +8,8 @@
       :windowWidth="windowWidth"
       :drawer="drawer"
       @toggleDrawer="toggleDrawer"
+      @successToast="successToast()"
+      @errorToast="errorToast()"
     />
     <NavBar :drawer="drawer" :key="drawer" />
     <v-main>
@@ -31,6 +33,7 @@
                 <!-- <v-btn variant="outlined" class="menu-buttons" @click="openAddExpenseDialog">Add Expense</v-btn> -->
                 <AddExpenseForm
                 :group_id="group_id"
+                @successToast="successToast(`Expense Created Successfully!`)"
                 /> 
 
 
@@ -56,7 +59,7 @@
                       <GroupDetails :group_id="group_id" />
                     </v-list-item>
                     <v-list-item>
-                      <AddMembers :group_id="group_id" />
+                      <AddMembers :group_id="group_id"/>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Exit Group</v-list-item-content>
@@ -114,6 +117,8 @@ import GroupDetails from "./GroupDetails.vue"
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import AddExpenseForm from './AddExpenseForm.vue';
+import { toast } from "vue3-toastify";
+import "../../node_modules/vue3-toastify/dist/index.css";
 
 export default {
   name: "GroupChat",
@@ -207,11 +212,22 @@ export default {
       this.windowWidth = window.innerWidth;
     },
     addExpense() {
-    // Implement the functionality to add expenses here
-    console.log("Expense added!");
-    this.$refs.expenseFormDialog.open();
-    // You can also trigger a dialog or perform any other action here
-  },
+      // Implement the functionality to add expenses here
+      console.log("Expense added!");
+      this.$refs.expenseFormDialog.open();
+      // You can also trigger a dialog or perform any other action here
+    },
+    successToast(message) {
+      toast.success(message, {
+        autoClose: 2000,
+      });
+    },
+
+    errorToast(message) {
+      toast.error(message, {
+        autoClose: 2000,
+      });
+    },
   // openAddExpenseDialog() {
   //   // Emit an event to open the dialog for adding expenses
   //   this.$refs.addExpenseForm.dialog = true;

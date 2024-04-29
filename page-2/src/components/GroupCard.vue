@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-xl mx-auto my-8 ma-8" elevation="16" max-width="1000">
+  <v-card class="mx-auto my-8 ma-8" elevation="16" max-width="1000" style="background-color:#e7d3eb">
     <v-card
       v-for="group in groups"
       :key="group.group_id"
