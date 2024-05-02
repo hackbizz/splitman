@@ -136,90 +136,59 @@ export const usersGroups = async (req, res, next) => {
 
 export const balanceExpense = async (req, res, next) => {
   try {
-      const group_id = req.params.group_id;
- 
-      const balanceExpense = await GroupService.balanceExpense({
-          group_id,
-        });
+    const group_id = req.params.group_id;
 
-        // const toPayDetails = {}
+    // Fetch balance expenses from the database
+    const balanceExpense = await GroupService.balanceExpense({ group_id });
 
-        // balanceExpense.map((data)=>{
-        //   if(!toPayDetails[data.debtor_id]){
-        //     toPayDetails[data.debtor_id] ={
-        //       id: data.debtor_id,
-        //       name:data.debtor_name,
-        //       amount:0
-        //     }
-        //   }
+    // Initialize an object to store balance details
+    const balanceDetails = {};
 
-        //   toPayDetails[data.debtor_id].amount += data.amount
-        // })
+    // Loop through each expense and update balance details
+    balanceExpense.forEach((data) => {
+      // Check if payer and debtor exist in balanceDetails, if not initialize them with 0 amounts
+      if (!balanceDetails[data.payer_id]) {
+        balanceDetails[data.payer_id] = {
+          id: data.payer_id,
+          name: data.payer_name,
+          amount_owed: 0,
+          amount_you_owe: 0,
+          balance: 0,
+        };
+      }
+      if (!balanceDetails[data.debtor_id]) {
+        balanceDetails[data.debtor_id] = {
+          id: data.debtor_id,
+          name: data.debtor_name,
+          amount_owed: 0,
+          amount_you_owe: 0,
+          balance: 0,
+        };
+      }
 
-        // const getPayDetails = {}
+      // Update amount owed and amount you owe
+      balanceDetails[data.payer_id].amount_owed += data.amount;
+      balanceDetails[data.debtor_id].amount_you_owe += data.amount;
 
-        // balanceExpense.map((data)=>{
-        //   if(!getPayDetails[data.payer_id]){
-        //     getPayDetails[data.payer_id] ={
-        //       id: data.payer_id,
-        //       name:data.payer_name,
-        //       amount:0
-        //     }
-        //   }
+      // Update balance
+      balanceDetails[data.payer_id].balance = balanceDetails[data.payer_id].amount_owed - balanceDetails[data.payer_id].amount_you_owe;
+      balanceDetails[data.debtor_id].balance = balanceDetails[data.debtor_id].amount_owed - balanceDetails[data.debtor_id].amount_you_owe;
+    });
 
-        //   getPayDetails[data.payer_id].amount += data.amount
-        // })
+    // Convert balanceDetails object to an array
+    const balanceDetailsArray = Object.values(balanceDetails);
 
-        const balanceDetails = {};
-
-        balanceExpense.map((data) => {
-          if (!balanceDetails[data.payer_id]) {
-            balanceDetails[data.payer_id] = {
-              id: data.payer_id,
-              name: data.payer_name,
-              amount_owed: 0,
-              amount_you_owe: 0,
-              balance: 0,
-            };
-          }
-        
-          if (!balanceDetails[data.debtor_id]) {
-            balanceDetails[data.debtor_id] = {
-              id: data.debtor_id,
-              name: data.debtor_name,
-              amount_owed: 0,
-              amount_you_owe: 0,
-              balance: 0,
-            };
-          }
-        
-          if (data.payer_id!== data.debtor_id) {
-            balanceDetails[data.payer_id].amount_owed += data.amount;
-            balanceDetails[data.debtor_id].amount_you_owe += data.amount;
-          }
-        
-          balanceDetails[data.payer_id].balance =
-            balanceDetails[data.payer_id].amount_owed -
-            balanceDetails[data.payer_id].amount_you_owe;
-        
-          balanceDetails[data.debtor_id].balance =
-            balanceDetails[data.debtor_id].amount_owed -
-            balanceDetails[data.debtor_id].amount_you_owe;
-        });
-        
-        const balanceDetailsArray = Object.values(balanceDetails);
-        
-
-        res.status(201).json({
-          success: true,
-          message: `Expense Balanced successfully!`,
-          balanceDetails: balanceDetailsArray,
-        });
-
+    // Send response
+    res.status(201).json({
+      success: true,
+      message: `Expense Balanced successfully!`,
+      balanceDetails: balanceDetailsArray,
+    });
   } catch (error) {
-      next(error);
+    next(error);
   }
 };
+
 
 const storage = multer.diskStorage({
   destination: "./upload/GroupImage",

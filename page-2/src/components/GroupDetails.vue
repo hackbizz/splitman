@@ -27,11 +27,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="member in members" :key="member.name">
+            <tr v-for="member in members" :key="member.id">
               <td>{{ member.name }}</td>
-              <td>{{ member.amount_owed }}</td>
-              <td>{{ member.amount_you_owe }}</td>
-              <td>{{ member.balance }}</td>
+              <td>{{ member.amount_owed || 0 }}</td>
+              <td>{{ member.amount_you_owe || 0 }}</td>
+              <td>{{ member.balance || 0 }}</td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -58,14 +58,13 @@ export default {
   },
   methods: {
     async getGroupDetails() {
-      await axios
-        .get(`http://localhost:3000/api/groups/groupBalance/${this.group_id}`)
-        .then((response) => {
-          this.members = response.data.balanceDetails;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        // Fetch group details including balances
+        const response = await axios.get(`http://localhost:3000/api/groups/groupBalance/${this.group_id}`);
+        this.members = response.data.balanceDetails;
+      } catch (error) {
+        console.error(error);
+      }
     },
   },
 };
